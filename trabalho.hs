@@ -57,4 +57,14 @@ sequencia n m
         | x == 0    = True
         | otherwise = False
 
+-- (17) uniao: junta duas listas sem repetir elementos
+uniao :: (Eq t) => [t] -> [t] -> [t]
+uniao l1 l2 = juntar l2 limpa1
+  where
+    limpa1 = remover_repetidos l1
+    limpa2 = remover_repetidos l2
+    juntar [] res = res
+    juntar (c:r) res
+        | pertence c res = juntar r res
+        | otherwise      = juntar r (insere_no_fim c res)
 
