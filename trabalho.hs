@@ -29,3 +29,22 @@ pertence _ [] = False
 pertence e (c:r)
     | e == c    = True
     | otherwise = pertence e r
+
+-- (11) variacoes: calcula a diferença entre elementos consecutivos da lista
+variacoes :: (Integral t) => [t] -> [t]
+variacoes l
+    | tem_menos_de_dois l = []
+    | otherwise           = (b - a) : variacoes (b:r)
+  where
+    a:b:r = l
+
+-- função auxiliar para verificar se a lista tem menos de dois elementos
+tem_menos_de_dois :: [t] -> Bool
+tem_menos_de_dois l
+    | dois_ou_mais l = False
+    | otherwise      = True
+  where
+    dois_ou_mais (_:_:_) = True
+    dois_ou_mais _       = False
+
+
