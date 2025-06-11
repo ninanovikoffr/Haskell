@@ -68,3 +68,21 @@ uniao l1 l2 = juntar l2 limpa1
         | pertence c res = juntar r res
         | otherwise      = juntar r (insere_no_fim c res)
 
+-- (20) insere_ordenado: insere um elemento em uma lista ordenada
+insere_ordenado :: (Ord t) => t -> [t] -> [t]
+insere_ordenado x l
+    | lista_vazia l = [x]
+    | x <= primeiro = x : l
+    | otherwise     = primeiro : insere_ordenado x resto
+  where
+    primeiro : resto = l
+
+-- função auxiliar para verificar se a lista está vazia
+lista_vazia :: [t] -> Bool
+lista_vazia l
+    | eh_vazia l = True
+    | otherwise  = False
+  where
+    eh_vazia [] = True
+    eh_vazia _  = False
+
