@@ -14,3 +14,18 @@ concatena l1 l2
     null_lista _  = False
     primeiro : resto = l1
 
+-- (8) remover_repetidos: remove elementos repetidos mantendo a ordem da primeira ocorrência
+remover_repetidos :: (Eq t) => [t] -> [t]
+remover_repetidos l = aux l []
+  where
+    aux [] _ = []
+    aux (c:r) vistos
+        | pertence c vistos = aux r vistos
+        | otherwise         = c : aux r (c:vistos)
+
+-- Função auxiliar para verificar se um elemento pertence a uma lista
+pertence :: (Eq t) => t -> [t] -> Bool
+pertence _ [] = False
+pertence e (c:r)
+    | e == c    = True
+    | otherwise = pertence e r
