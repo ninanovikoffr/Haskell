@@ -47,4 +47,14 @@ tem_menos_de_dois l
     dois_ou_mais (_:_:_) = True
     dois_ou_mais _       = False
 
+-- (14) sequencia: gera uma lista com n números começando de m
+sequencia :: (Integral t) => t -> t -> [t]
+sequencia n m
+    | n_igual_a_zero n = []
+    | otherwise        = m : sequencia (n - 1) (m + 1)
+  where
+    n_igual_a_zero x
+        | x == 0    = True
+        | otherwise = False
+
 
