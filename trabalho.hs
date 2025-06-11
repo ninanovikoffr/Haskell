@@ -86,3 +86,48 @@ lista_vazia l
     eh_vazia [] = True
     eh_vazia _  = False
 
+-- (23) mediana: calcula a mediana de uma lista de números
+mediana :: (Real t, Fractional f) => [t] -> f
+mediana l
+    | lista_vazia l = 0
+    | eh_par tam    = media (pegar_posicao (meio - 1) l_ordenada, pegar_posicao meio l_ordenada)
+    | otherwise     = realToFrac (pegar_posicao meio l_ordenada)
+  where
+    l_ordenada = ordenar l
+    tam = tamanho l_ordenada
+    meio = tam `div` 2
+
+-- ordena usando a função insere_ordenado 
+ordenar :: (Ord t) => [t] -> [t]
+ordenar [] = []
+ordenar (c:r) = insere_ordenado c (ordenar r)
+
+-- verifica se número é par
+eh_par :: Int -> Bool
+eh_par n
+    | n `mod` 2 == 0 = True
+    | otherwise      = False
+
+-- média entre dois valores
+media :: (Real t, Fractional f) => (t, t) -> f
+media (a, b) = (realToFrac a + realToFrac b) / 2
+
+-- calcula o tamanho da lista
+tamanho :: [t] -> Int
+tamanho l
+    | lista_vazia l = 0
+    | otherwise     = 1 + tamanho (resto l)
+  where
+    resto (_:r) = r
+    resto []    = []
+
+-- pega o elemento da posição i
+pegar_posicao :: Int -> [t] -> t
+pegar_posicao i l
+    | i == 0    = primeiro l
+    | otherwise = pegar_posicao (i - 1) (resto l)
+  where
+    primeiro (c:_) = c
+    primeiro []    = error "lista vazia"
+    resto (_:r)    = r
+    resto []       = error "índice fora da lista"
