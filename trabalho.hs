@@ -90,7 +90,7 @@ lista_vazia l
 mediana :: (Real t, Fractional f) => [t] -> f
 mediana l
     | lista_vazia l = 0
-    | eh_par tam    = media (pegar_posicao (meio - 1) l_ordenada, pegar_posicao meio l_ordenada)
+    | eh_par tam    = media_2 (pegar_posicao (meio - 1) l_ordenada, pegar_posicao meio l_ordenada)
     | otherwise     = realToFrac (pegar_posicao meio l_ordenada)
   where
     l_ordenada = ordenar l
@@ -109,8 +109,8 @@ eh_par n
     | otherwise      = False
 
 -- média entre dois valores
-media :: (Real t, Fractional f) => (t, t) -> f
-media (a, b) = (realToFrac a + realToFrac b) / 2
+media_2 :: (Real t, Fractional f) => (t, t) -> f
+media_2 (a, b) = (realToFrac a + realToFrac b) / 2
 
 -- calcula o tamanho da lista
 tamanho :: [t] -> Int
@@ -175,3 +175,34 @@ tem_um_elemento l
   where
     eh_uma [_] = True
     eh_uma _   = False
+
+-- (29) media: calcula a média aritmética de uma lista de números
+media :: (Real t, Fractional f) => [t] -> f
+media l
+    | lista_vazia l = 0
+    | otherwise     = realToFrac (soma l) / realToFrac (tamanho l)
+
+-- soma todos os elementos da lista
+soma :: (Num t) => [t] -> t
+soma l
+    | lista_vazia l = 0
+    | otherwise     = cabeca l + soma (cauda l)
+
+-- retorna o primeiro elemento da lista
+cabeca :: [t] -> t
+cabeca l
+    | lista_vazia l = error "lista vazia"
+    | otherwise     = pegar l
+  where
+    pegar (c:_) = c
+    pegar []    = error "lista vazia"
+
+-- retorna o restante da lista (sem o primeiro)
+cauda :: [t] -> [t]
+cauda l
+    | lista_vazia l = []
+    | otherwise     = tirar l
+  where
+    tirar (_:r) = r
+    tirar []    = []
+
