@@ -131,3 +131,47 @@ pegar_posicao i l
     primeiro []    = error "lista vazia"
     resto (_:r)    = r
     resto []       = error "índice fora da lista"
+
+-- (26) rodar_direita: rotaciona a lista n vezes para a direita
+rodar_direita :: Int -> [t] -> [t]
+rodar_direita n l
+    | lista_vazia l = []
+    | eh_zero n     = l
+    | otherwise     = rodar_direita (n - 1) (ultimo l : sem_ultimo l)
+
+-- verifica se o número é zero
+eh_zero :: Int -> Bool
+eh_zero x
+    | x == 0    = True
+    | otherwise = False
+
+-- retorna o último elemento da lista
+ultimo :: [t] -> t
+ultimo l
+    | tem_um_elemento l = primeiro l
+    | otherwise         = ultimo (resto l)
+  where
+    primeiro (c:_) = c
+    primeiro []    = error "lista vazia"
+    resto (_:r)    = r
+    resto []       = []
+
+-- remove o último elemento da lista
+sem_ultimo :: [t] -> [t]
+sem_ultimo l
+    | tem_um_elemento l = []
+    | otherwise         = primeiro l : sem_ultimo (resto l)
+  where
+    primeiro (c:_) = c
+    primeiro []    = error "lista vazia"
+    resto (_:r)    = r
+    resto []       = []
+
+-- verifica se a lista tem exatamente um elemento
+tem_um_elemento :: [t] -> Bool
+tem_um_elemento l
+    | eh_uma l   = True
+    | otherwise  = False
+  where
+    eh_uma [_] = True
+    eh_uma _   = False
