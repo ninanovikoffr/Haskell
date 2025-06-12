@@ -1,3 +1,11 @@
+-- |Trabalho de Programação Funcional 2025/1 
+-- |Professor : Bruno de Oliveira Schneider
+
+-- |Aluno: Nina Tobias Novikoff da Cunha Ribeiro
+-- |Matricula : 202410375
+
+-- |Grupo 2 : 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35, 38
+
 -- (2) insere_no_fim: insere um elemento no final da lista
 insere_no_fim :: t -> [t] -> [t]
 insere_no_fim x [] = [x]
@@ -7,12 +15,19 @@ insere_no_fim x (c:r)
 -- (5) concatena: junta os elementos da primeira lista com os da segunda
 concatena :: [t] -> [t] -> [t]
 concatena l1 l2
-    | null_lista l1 = l2
+    | lista_vazia l1 = l2
     | otherwise     = primeiro : concatena resto l2
   where
-    null_lista [] = True
-    null_lista _  = False
     primeiro : resto = l1
+
+-- verifica se a lista está vazia
+lista_vazia :: [t] -> Bool
+lista_vazia l
+    | eh_vazia l = True
+    | otherwise  = False
+  where
+    eh_vazia [] = True
+    eh_vazia _  = False
 
 -- (8) remover_repetidos: remove elementos repetidos mantendo a ordem da primeira ocorrência
 remover_repetidos :: (Eq t) => [t] -> [t]
@@ -21,9 +36,9 @@ remover_repetidos l = aux l []
     aux [] _ = []
     aux (c:r) vistos
         | pertence c vistos = aux r vistos
-        | otherwise         = c : aux r (c:vistos)
+        | otherwise         = c : aux r (c : vistos)
 
--- Função auxiliar para verificar se um elemento pertence a uma lista
+-- verifica se um elemento pertence a uma lista
 pertence :: (Eq t) => t -> [t] -> Bool
 pertence _ [] = False
 pertence e (c:r)
@@ -36,9 +51,9 @@ variacoes l
     | tem_menos_de_dois l = []
     | otherwise           = (b - a) : variacoes (b:r)
   where
-    a:b:r = l
+    a : b : r = l
 
--- função auxiliar para verificar se a lista tem menos de dois elementos
+-- verifica se a lista tem menos de dois elementos
 tem_menos_de_dois :: [t] -> Bool
 tem_menos_de_dois l
     | dois_ou_mais l = False
@@ -62,7 +77,6 @@ uniao :: (Eq t) => [t] -> [t] -> [t]
 uniao l1 l2 = juntar l2 limpa1
   where
     limpa1 = remover_repetidos l1
-    limpa2 = remover_repetidos l2
     juntar [] res = res
     juntar (c:r) res
         | pertence c res = juntar r res
@@ -73,25 +87,16 @@ insere_ordenado :: (Ord t) => t -> [t] -> [t]
 insere_ordenado x l
     | lista_vazia l = [x]
     | x <= primeiro = x : l
-    | otherwise     = primeiro : insere_ordenado x resto
+    | otherwise     = primeiro : insere_ordenado x resto_lista
   where
-    primeiro : resto = l
-
--- função auxiliar para verificar se a lista está vazia
-lista_vazia :: [t] -> Bool
-lista_vazia l
-    | eh_vazia l = True
-    | otherwise  = False
-  where
-    eh_vazia [] = True
-    eh_vazia _  = False
+    primeiro : resto_lista = l
 
 -- (23) mediana: calcula a mediana de uma lista de números
 mediana :: (Real t, Fractional f) => [t] -> f
 mediana l
     | lista_vazia l = 0
-    | eh_par tam    = media_2 (pegar_posicao (meio - 1) l_ordenada, pegar_posicao meio l_ordenada)
-    | otherwise     = realToFrac (pegar_posicao meio l_ordenada)
+    | eh_par tam    = media_2 (pegar_pos (meio - 1) l_ordenada, pegar_pos meio l_ordenada)
+    | otherwise     = realToFrac (pegar_pos meio l_ordenada)
   where
     l_ordenada = ordenar l
     tam = tamanho l_ordenada
@@ -116,21 +121,13 @@ media_2 (a, b) = (realToFrac a + realToFrac b) / 2
 tamanho :: [t] -> Int
 tamanho l
     | lista_vazia l = 0
-    | otherwise     = 1 + tamanho (resto l)
-  where
-    resto (_:r) = r
-    resto []    = []
+    | otherwise     = 1 + tamanho (resto_lista l)
 
 -- pega o elemento da posição i
-pegar_posicao :: Int -> [t] -> t
-pegar_posicao i l
-    | i == 0    = primeiro l
-    | otherwise = pegar_posicao (i - 1) (resto l)
-  where
-    primeiro (c:_) = c
-    primeiro []    = error "lista vazia"
-    resto (_:r)    = r
-    resto []       = error "índice fora da lista"
+pegar_pos :: Int -> [t] -> t
+pegar_pos i (c:r)
+    | i == 0    = c
+    | otherwise = pegar_pos (i - 1) r
 
 -- (26) rodar_direita: rotaciona a lista n vezes para a direita
 rodar_direita :: Int -> [t] -> [t]
@@ -148,24 +145,14 @@ eh_zero x
 -- retorna o último elemento da lista
 ultimo :: [t] -> t
 ultimo l
-    | tem_um_elemento l = primeiro l
-    | otherwise         = ultimo (resto l)
-  where
-    primeiro (c:_) = c
-    primeiro []    = error "lista vazia"
-    resto (_:r)    = r
-    resto []       = []
+    | tem_um_elemento l = cabeca l
+    | otherwise         = ultimo (resto_lista l)
 
 -- remove o último elemento da lista
 sem_ultimo :: [t] -> [t]
 sem_ultimo l
     | tem_um_elemento l = []
-    | otherwise         = primeiro l : sem_ultimo (resto l)
-  where
-    primeiro (c:_) = c
-    primeiro []    = error "lista vazia"
-    resto (_:r)    = r
-    resto []       = []
+    | otherwise         = cabeca l : sem_ultimo (resto_lista l)
 
 -- verifica se a lista tem exatamente um elemento
 tem_um_elemento :: [t] -> Bool
@@ -186,23 +173,55 @@ media l
 soma :: (Num t) => [t] -> t
 soma l
     | lista_vazia l = 0
-    | otherwise     = cabeca l + soma (cauda l)
+    | otherwise     = cabeca l + soma (resto_lista l)
 
 -- retorna o primeiro elemento da lista
 cabeca :: [t] -> t
-cabeca l
-    | lista_vazia l = error "lista vazia"
-    | otherwise     = pegar l
-  where
-    pegar (c:_) = c
-    pegar []    = error "lista vazia"
+cabeca (c:_) = c
 
 -- retorna o restante da lista (sem o primeiro)
-cauda :: [t] -> [t]
-cauda l
-    | lista_vazia l = []
-    | otherwise     = tirar l
+resto_lista :: [t] -> [t]
+resto_lista (_:r) = r
+
+-- (32) seleciona: retorna os elementos da lista original nas posições indicadas 
+seleciona :: [Char] -> [Int] -> [[Char]]
+seleciona l posicoes
+    | lista_vazia posicoes = []
+    | otherwise            = imprime (pegar_pos (cabeca posicoes) l : resto)
   where
-    tirar (_:r) = r
-    tirar []    = []
+    resto = map (\i -> pegar_pos i l) (resto_lista posicoes)
+
+-- imprime: transforma lista de Char em lista de Strings
+imprime :: [Char] -> [[Char]]
+imprime l = map (\x -> [x]) l
+
+-- (35) primo: verifica se um número é primo
+primo :: Int -> Bool
+primo n = dois_divisores n 1 0
+
+-- verifica se o número tem exatamente dois divisores
+dois_divisores :: Int -> Int -> Int -> Bool
+dois_divisores n atual conta
+    | atual > n          = conta == 2
+    | n `mod` atual == 0 = dois_divisores n (atual + 1) (conta + 1)
+    | otherwise          = dois_divisores n (atual + 1) conta
+
+-- (38) compactar: agrupa blocos consecutivos de números repetidos
+compactar :: [Int] -> [[Int]]
+compactar [] = []
+compactar (c:r) = agrupa_bloco c 1 r
+
+-- agrupa números iguais que aparecem em sequência (blocos)
+agrupa_bloco :: Int -> Int -> [Int] -> [[Int]]
+agrupa_bloco x q [] = [finaliza x q]
+agrupa_bloco x q (c:r)
+    | c == x    = agrupa_bloco x (q + 1) r
+    | otherwise = finaliza x q : agrupa_bloco c 1 r
+
+-- finaliza o bloco com o número e a quantidade
+finaliza :: Int -> Int -> [Int]
+finaliza x q
+    | q == 1    = [x]
+    | otherwise = [q, x]
+
 
